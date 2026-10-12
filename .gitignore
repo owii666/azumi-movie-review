@@ -1,0 +1,53 @@
+# ========================================================
+# Azumi Movie Reviews - .gitignore
+# Aturan Pengabaian File untuk Git & Keamanan Private Repo
+# ========================================================
+
+# 1. Konfigurasi Kredensial Sensitif & File Lingkungan Lokal
+config/database.local.php
+.env
+.env.*
+*.env
+
+# 2. File Upload Dinamis Pengguna & Pengujian
+# (Folder uploads/posters/ dipertahankan lewat .gitkeep dan .htaccess pengaman)
+uploads/posters/*
+!uploads/posters/.gitkeep
+!uploads/.htaccess
+
+# 3. Database Dump Lokal, Cadangan & Data Sensitif
+# (database/schema.sql tetap dilacak sebagai skema resmi)
+*.sql.gz
+*.sql.tar
+*.dump
+*.backup
+*.bak
+database/backups/
+database/dumps/
+database/backup_*.sql
+database/export_*.sql
+private_*.sql
+
+# 4. Log Server, File Sementara & Cache
+error_log
+access_log
+*.log
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# 5. Editor, IDE & File Sistem Operasi
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+Thumbs.db
+desktop.ini
+*.local
+
+# 6. Dependensi Paket Tambahan (jika di kemudian hari digunakan)
+vendor/
+node_modules/

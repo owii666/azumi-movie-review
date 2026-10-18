@@ -32,7 +32,7 @@ if (!$admin) {
 $errors = [];
 $successMessage = '';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     // 1. CSRF Protection
     if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
         $errors[] = "Sesi keamanan tidak valid atau telah kedaluwarsa. Silakan muat ulang halaman.";
@@ -99,17 +99,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <main class="admin-container">
-    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 22px; flex-wrap: wrap; gap: 10px;">
+    <div class="admin-page-header">
         <div>
-            <h1 style="font-family: var(--font-heading); font-size: 1.5rem; color: var(--dark); margin-bottom: 4px;">
-                Pengaturan Akun & Ganti Password
+            <h1 class="admin-page-title">
+                Pengaturan Akun &amp; Ganti Password
             </h1>
-            <p style="color: var(--lighter-grey); font-size: 0.85rem;">
+            <p class="admin-page-subtitle">
                 Kelola kredensial akun administrator Anda secara aman. Kata sandi dienkripsi dengan standar industri (bcrypt).
             </p>
         </div>
         <div>
-            <a href="index.php" class="btn-action btn-view" style="padding: 8px 14px; text-decoration: none; font-size: 0.85rem;">
+            <a href="index.php" class="btn-action btn-view" style="padding: 7px 14px; text-decoration: none; font-size: 0.8rem;">
                 &larr; Kembali ke Moderasi
             </a>
         </div>

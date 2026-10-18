@@ -74,6 +74,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 searchDropdownBar.classList.remove("active");
             }
         });
+
+        // Close search on Escape key
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && searchDropdownBar.classList.contains("active")) {
+                searchDropdownBar.classList.remove("active");
+                const quickResults = document.getElementById("search-quick-results");
+                if (quickResults) {
+                    quickResults.innerHTML = "";
+                    quickResults.classList.remove("has-results");
+                }
+                searchIcon.focus();
+            }
+        });
     }
 
     // Back to top (example scroll animation, if needed for long pages)

@@ -67,7 +67,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <p class="sub-subtitle">Masuk untuk mengelola ulasan dan publikasi film</p>
 
             <?php if (!empty($error)): ?>
-                <div class="alert-box alert-danger" style="margin-bottom: 20px;">
+                <div class="alert-box alert-danger">
+                    <span class="alert-dot"></span>
                     <span><?= e($error) ?></span>
                 </div>
             <?php endif; ?>
@@ -76,7 +77,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $flashMessages = get_flash_messages();
             foreach ($flashMessages as $flash): 
             ?>
-                <div class="alert-box alert-<?= e($flash['type']) ?>" style="margin-bottom: 20px;">
+                <div class="alert-box alert-<?= e($flash['type']) ?>">
+                    <span class="alert-dot"></span>
                     <span><?= e($flash['message']) ?></span>
                 </div>
             <?php endforeach; ?>

@@ -55,7 +55,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (empty($errors)) {
             try {
-                $reviewedAt = ($status !== 'pending' && empty($submission['reviewed_at'])) ? date('Y-m-d H:i:s') : $submission['reviewed_at'];
+                if ($status === 'approved') {
+                    $reviewedAt = ($submission['status'] !== 'approved' || empty($submission['reviewed_at'])) ? date('Y-m-d H:i:s') : $submission['reviewed_at'];
+                } elseif ($status === 'pending') {
+                    $reviewedAt = null;
+                } else {
+                    $reviewedAt = date('Y-m-d H:i:s');
+                }
 
                 $updateStmt = $pdo->prepare("
                     UPDATE film_submissions 

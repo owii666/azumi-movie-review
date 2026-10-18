@@ -59,22 +59,22 @@ $submissions = $stmt->fetchAll();
 ?>
 
 <main class="admin-container">
-    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 22px; flex-wrap: wrap; gap: 10px;">
+    <div class="admin-page-header">
         <div>
-            <h1 style="font-family: var(--font-heading); font-size: 1.5rem; color: var(--dark); margin-bottom: 4px;">
-                Dashboard Moderasi & Publikasi
+            <h1 class="admin-page-title">
+                Dashboard Moderasi &amp; Publikasi
             </h1>
-            <p style="color: var(--lighter-grey); font-size: 0.85rem;">
+            <p class="admin-page-subtitle">
                 Tinjau pengajuan ulasan film dari pengunjung, kurasi teks, dan terbitkan ulasan ke publik.
             </p>
         </div>
-        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <a href="account.php" class="btn-submit" style="padding: 9px 16px; font-size: 0.82rem; text-decoration: none; background: #333333;" title="Kelola Akun dan Ganti Password">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 4px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                Pengaturan Akun / Ganti Password
+        <div class="admin-page-actions">
+            <a href="account.php" class="btn-action btn-view" title="Kelola Akun dan Ganti Password">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                Pengaturan Akun
             </a>
-            <a href="upcoming.php" class="btn-submit" style="padding: 9px 16px; font-size: 0.82rem; text-decoration: none;">
-                Kelola Film Upcoming (<?= $upcomingCount ?>) &rarr;
+            <a href="upcoming.php" class="btn-submit" style="padding: 7px 14px; font-size: 0.78rem; text-decoration: none;">
+                Kelola Upcoming (<?= $upcomingCount ?>) &rarr;
             </a>
         </div>
     </div>

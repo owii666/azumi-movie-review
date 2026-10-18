@@ -17,6 +17,11 @@ if (!defined('DB_USER')) define('DB_USER', getenv('DB_USER') ?: 'root');
 if (!defined('DB_PASS')) define('DB_PASS', getenv('DB_PASS') !== false ? getenv('DB_PASS') : '');
 if (!defined('DB_NAME')) define('DB_NAME', getenv('DB_NAME') ?: 'azumi_reviews');
 
+// Set application default timezone
+if (function_exists('date_default_timezone_set')) {
+    date_default_timezone_set('Asia/Jakarta');
+}
+
 /**
  * Returns a PDO instance connected to the application database.
  * If the database does not exist on local dev, it will attempt to initialize it safely.
@@ -39,6 +44,12 @@ function getDbConnection(): PDO {
 
     try {
         $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
+        // Synchronize MySQL session timezone with application timezone (+07:00 / WIB)
+        try {
+            $pdo->exec("SET time_zone = '+07:00'");
+        } catch (Exception $tzEx) {
+            // Silently continue if host restricts timezone setting
+        }
     } catch (PDOException $e) {
         // If database does not exist (error 1049), attempt to create it on local/development
         if ($e->getCode() == 1049 || strpos($e->getMessage(), 'Unknown database') !== false) {

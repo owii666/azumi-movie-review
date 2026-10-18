@@ -4,6 +4,8 @@
  * Azumi Movie Reviews
  */
 ?>
+
+
     <footer>
         <div class="container">
             <p>&copy; <?= date('Y') ?> Azumi Movie Reviews. All Rights Reserved.</p>

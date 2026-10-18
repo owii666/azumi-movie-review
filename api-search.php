@@ -22,7 +22,7 @@ try {
 
     // 1. Search Approved Reviews
     $stmt = $pdo->prepare("
-        SELECT id, title, category, author_name 
+        SELECT id, title, category, author_name, image_path, reviewed_at, submitted_at 
         FROM film_submissions 
         WHERE status = 'approved' 
           AND (title LIKE :term1 OR content LIKE :term2 OR author_name LIKE :term3)
@@ -41,18 +41,19 @@ try {
             'title'    => $row['title'],
             'type'     => 'review',
             'category' => $row['category'] ?: 'REVIEWS',
-            'meta'     => $row['author_name'] ?: 'Azumi Team',
+            'meta'     => ($row['author_name'] ?: 'Azumi Team') . ' • ' . format_date($row['reviewed_at'] ?: $row['submitted_at']),
+            'image'    => get_poster_url($row['image_path']),
             'url'      => 'review-detail.php?id=' . $row['id']
         ];
     }
 
     // 2. Search Upcoming Films
     $upStmt = $pdo->prepare("
-        SELECT id, title 
+        SELECT id, title, poster_path 
         FROM upcoming_films 
         WHERE title LIKE :term 
         ORDER BY created_at DESC 
-        LIMIT 4
+        LIMIT 3
     ");
     $upStmt->execute([':term' => $term]);
 
@@ -62,7 +63,8 @@ try {
             'title'    => $upRow['title'],
             'type'     => 'upcoming',
             'category' => 'UPCOMING WATCHLIST',
-            'meta'     => 'Editorial Watchlist',
+            'meta'     => 'Curated Watchlist',
+            'image'    => get_poster_url($upRow['poster_path']),
             'url'      => 'upcoming.php'
         ];
     }

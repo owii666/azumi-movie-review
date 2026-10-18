@@ -261,6 +261,21 @@ require_once __DIR__ . '/includes/header.php';
                                 <span style="font-size: 0.8rem; color: var(--lighter-grey);">Format: JPG, JPEG, PNG, WebP &bull; Maksimal 2 MB</span>
                             </div>
                         </div>
+
+                        <!-- Image Preview Box Before Submit -->
+                        <div id="imagePreviewBox" class="image-preview-container" style="display: none;">
+                            <div class="image-preview-card">
+                                <div class="image-preview-thumb-wrap">
+                                    <img id="imagePreviewImg" src="" alt="Pratinjau Gambar Poster" class="image-preview-thumb">
+                                </div>
+                                <div class="image-preview-meta">
+                                    <span class="preview-badge">PRATINJAU POSTER</span>
+                                    <span id="previewFileName" class="preview-filename"></span>
+                                    <span id="previewFileSize" class="preview-filesize"></span>
+                                    <span class="preview-hint">Gambar siap diunggah. Klik area upload jika ingin mengganti file.</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div style="margin-top: 30px; text-align: right;">
@@ -283,6 +298,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const countDisplay = document.getElementById("pCountDisplay");
     const imageInput = document.getElementById("image");
     const fileNameText = document.getElementById("fileNameText");
+    const previewBox = document.getElementById("imagePreviewBox");
+    const previewImg = document.getElementById("imagePreviewImg");
+    const previewFileName = document.getElementById("previewFileName");
+    const previewFileSize = document.getElementById("previewFileSize");
     const submitForm = document.getElementById("submitFilmForm");
 
     function updateParagraphCount() {
@@ -316,12 +335,32 @@ document.addEventListener("DOMContentLoaded", function () {
         updateParagraphCount(); // Initial calculation
     }
 
-    if (imageInput && fileNameText) {
+    if (imageInput) {
         imageInput.addEventListener("change", function () {
-            if (this.files && this.files.length > 0) {
-                fileNameText.innerHTML = "<strong>File terpilih:</strong> " + this.files[0].name + " (" + (this.files[0].size / 1024 / 1024).toFixed(2) + " MB)";
+            if (this.files && this.files[0]) {
+                const file = this.files[0];
+                const sizeMb = (file.size / (1024 * 1024)).toFixed(2);
+                if (fileNameText) {
+                    fileNameText.innerHTML = "<strong>File terpilih:</strong> " + file.name + " (" + sizeMb + " MB)";
+                }
+
+                if (file.type && file.type.startsWith("image/")) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        if (previewImg) previewImg.src = e.target.result;
+                        if (previewFileName) previewFileName.textContent = file.name;
+                        if (previewFileSize) previewFileSize.textContent = sizeMb + " MB";
+                        if (previewBox) previewBox.style.display = "block";
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    if (previewBox) previewBox.style.display = "none";
+                }
             } else {
-                fileNameText.innerHTML = "<strong>Klik untuk memilih gambar</strong> atau seret file ke sini";
+                if (fileNameText) {
+                    fileNameText.innerHTML = "<strong>Klik untuk memilih gambar</strong> atau seret file ke sini";
+                }
+                if (previewBox) previewBox.style.display = "none";
             }
         });
     }

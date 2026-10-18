@@ -4,6 +4,10 @@
  * Azumi Movie Reviews
  */
 
+if (function_exists('date_default_timezone_set')) {
+    date_default_timezone_set('Asia/Jakarta');
+}
+
 if (session_status() === PHP_SESSION_NONE) {
     // Detect SSL whether direct or through reverse proxy / Cloudflare
     $isHttps = (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off') ||

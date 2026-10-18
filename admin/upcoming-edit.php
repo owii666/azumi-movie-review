@@ -66,6 +66,20 @@ if (!$film) {
                 <label for="poster">Ganti Poster <span class="hint">(Opsional, kosongkan jika tidak ingin mengubah poster)</span></label>
                 <input type="file" name="poster" id="poster" class="form-control" accept=".jpg,.jpeg,.png,.webp">
                 <div class="form-help">Format: JPG, JPEG, PNG, WebP &bull; Maksimal 2 MB.</div>
+
+                <!-- Poster Image Preview -->
+                <div id="upcomingEditPreviewBox" class="image-preview-container" style="display: none; margin-top: 12px;">
+                    <div class="image-preview-card" style="padding: 10px 14px;">
+                        <div class="image-preview-thumb-wrap" style="width: 50px; height: 72px;">
+                            <img id="upcomingEditPreviewImg" src="" alt="Pratinjau Poster Baru" class="image-preview-thumb">
+                        </div>
+                        <div class="image-preview-meta">
+                            <span class="preview-badge">PRATINJAU POSTER BARU</span>
+                            <span id="upcomingEditPreviewName" class="preview-filename" style="font-size: 0.82rem;"></span>
+                            <span id="upcomingEditPreviewSize" class="preview-filesize"></span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div style="margin-top: 30px; display: flex; justify-content: flex-end; gap: 10px;">
@@ -79,5 +93,36 @@ if (!$film) {
         </form>
     </div>
 </main>
+
+<script>
+const editPosterInput = document.getElementById("poster");
+if (editPosterInput) {
+    editPosterInput.addEventListener("change", function () {
+        const previewBox = document.getElementById("upcomingEditPreviewBox");
+        const previewImg = document.getElementById("upcomingEditPreviewImg");
+        const previewName = document.getElementById("upcomingEditPreviewName");
+        const previewSize = document.getElementById("upcomingEditPreviewSize");
+
+        if (this.files && this.files[0]) {
+            const file = this.files[0];
+            const sizeMb = (file.size / (1024 * 1024)).toFixed(2);
+            if (file.type && file.type.startsWith("image/")) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    if (previewImg) previewImg.src = e.target.result;
+                    if (previewName) previewName.textContent = file.name;
+                    if (previewSize) previewSize.textContent = sizeMb + " MB";
+                    if (previewBox) previewBox.style.display = "block";
+                };
+                reader.readAsDataURL(file);
+            } else {
+                if (previewBox) previewBox.style.display = "none";
+            }
+        } else {
+            if (previewBox) previewBox.style.display = "none";
+        }
+    });
+}
+</script>
 
 <?php require_once __DIR__ . '/footer.php'; ?>

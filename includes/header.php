@@ -9,6 +9,20 @@ require_once __DIR__ . '/auth.php';
 
 $currentPage = basename($_SERVER['PHP_SELF']);
 $pageTitle = $pageTitle ?? 'Azumi Movie Reviews';
+
+// Dynamic ticker: fetch 3 latest upcoming films
+$_tickerFilms = [];
+try {
+    $_tickerPdo = getDbConnection();
+    $_tickerStmt = $_tickerPdo->prepare(
+        "SELECT title FROM upcoming_films ORDER BY created_at DESC, id DESC LIMIT 3"
+    );
+    $_tickerStmt->execute();
+    $_tickerFilms = $_tickerStmt->fetchAll(PDO::FETCH_COLUMN) ?: [];
+} catch (Exception $_tickerEx) {
+    // Silently fail — fallback text used below
+    $_tickerFilms = [];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -32,7 +46,16 @@ $pageTitle = $pageTitle ?? 'Azumi Movie Reviews';
             <div class="top-news-container">
                 <span class="news-label">LATEST NEWS</span>
                 <div class="news-ticker">
-                    <span class="news-ticker-content">A Fan Fest 2026 (JF 2026) is Calling For Entries For Both Traditional and VR films &bull; Follow Our Tribute to the Art Theatre Guild &bull; Stay tuned for upcoming Summer Festival coverage!</span>
+                    <span class="news-ticker-content">
+                    <?php if (!empty($_tickerFilms)): ?>
+                        <?php foreach ($_tickerFilms as $_idx => $_filmTitle): ?>
+                            <span class="ticker-item"><strong class="ticker-prefix">Now Showing:</strong> <?= e($_filmTitle) ?> &mdash; Read the full review on Azumi Movie Reviews. Our editorial team is currently watching this film and preparing our thoughts for you.</span>
+                            <span class="ticker-separator">&bull;&bull;&bull;</span>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <span class="ticker-item"><strong class="ticker-prefix">Now Showing:</strong> Upcoming Asian Cinema Highlights &mdash; Read the full review on Azumi Movie Reviews. Our editorial team is currently watching this film and preparing our thoughts for you.</span>
+                    <?php endif; ?>
+                    </span>
                 </div>
             </div>
         </div>
@@ -42,60 +65,59 @@ $pageTitle = $pageTitle ?? 'Azumi Movie Reviews';
                 <a href="index.php">AZUMI MOVIE REVIEWS</a>
                 <span class="date"><?= date('F j, Y') ?></span>
             </div>
-            <ul class="nav-links">
-                <li><a href="about.php" class="<?= $currentPage === 'about.php' ? 'active-link' : '' ?>">ABOUT US</a></li>
-                <li><a href="upcoming.php" class="<?= $currentPage === 'upcoming.php' ? 'active-link' : '' ?>">UPCOMING</a></li>
-                <li><a href="reviews.php" class="<?= $currentPage === 'reviews.php' || $currentPage === 'review-detail.php' ? 'active-link' : '' ?>">REVIEWS</a></li>
-                <li><a href="submit.php" class="<?= $currentPage === 'submit.php' ? 'active-link' : '' ?>">SUBMIT YOUR FILM</a></li>
-                <li><a href="/admin" style="color: var(--accent); font-weight: 700;">ADMIN DASHBOARD</a></li>
-                <li>
-                    <a href="search.php" id="search-icon" aria-label="Search" title="Cari film atau ulasan">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            <div class="nav-right">
+                <ul class="nav-links">
+                    <li><a href="about.php" class="<?= $currentPage === 'about.php' ? 'active-link' : '' ?>">ABOUT US</a></li>
+                    <li><a href="upcoming.php" class="<?= $currentPage === 'upcoming.php' ? 'active-link' : '' ?>">UPCOMING</a></li>
+                    <li><a href="reviews.php" class="<?= $currentPage === 'reviews.php' || $currentPage === 'review-detail.php' ? 'active-link' : '' ?>">REVIEWS</a></li>
+                    <li><a href="submit.php" class="<?= $currentPage === 'submit.php' ? 'active-link' : '' ?>">SUBMIT YOUR FILM</a></li>
+                    <li><a href="/admin" style="color: var(--accent); font-weight: 700;">ADMIN DASHBOARD</a></li>
+                </ul>
+                <div class="nav-actions">
+                    <div class="nav-search-wrapper" id="nav-search-wrapper">
+                        <a href="search.php" id="search-icon" class="nav-search-toggle" aria-label="Search" title="Cari film atau ulasan">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                        </a>
+
+                        <!-- Floating Dropdown Search -->
+                        <div class="search-dropdown-bar" id="search-dropdown-bar">
+                            <div class="search-dropdown-container">
+                                <form action="search.php" method="GET" class="search-inline-form" id="search-inline-form">
+                                    <button type="submit" class="search-inline-icon-btn" title="Cari ulasan" aria-label="Cari ulasan">
+                                        <svg class="search-inline-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="11" cy="11" r="8"></circle>
+                                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                        </svg>
+                                    </button>
+                                    <input type="text" name="q" id="search-input" class="search-inline-input" 
+                                           value="<?= isset($_GET['q']) ? e($_GET['q']) : '' ?>"
+                                           placeholder="Cari ulasan atau film..." 
+                                           autocomplete="off">
+                                    <button type="button" id="close-search" class="search-btn-close" aria-label="Tutup pencarian" title="Tutup">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                                        </svg>
+                                    </button>
+                                </form>
+                                <div id="search-quick-results" class="search-quick-results"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="hamburger-menu" aria-label="Open menu">
+                        <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
                         </svg>
-                    </a>
-                </li>
-            </ul>
-            <div class="hamburger-menu" aria-label="Open menu">
-                <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="3" y1="12" x2="21" y2="12"></line>
-                    <line x1="3" y1="6" x2="21" y2="6"></line>
-                    <line x1="3" y1="18" x2="21" y2="18"></line>
-                </svg>
+                    </div>
+                </div>
             </div>
         </nav>
-
-        <!-- Compact Search Bar Dropdown (Non-intrusive) -->
-        <div class="search-dropdown-bar" id="search-dropdown-bar">
-            <div class="search-dropdown-container">
-                <form action="search.php" method="GET" class="search-inline-form" id="search-inline-form">
-                    <button type="submit" class="search-inline-icon-btn" title="Cari ulasan" aria-label="Cari ulasan">
-                        <svg class="search-inline-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                        </svg>
-                    </button>
-                    <input type="text" name="q" id="search-input" class="search-inline-input" 
-                           value="<?= isset($_GET['q']) ? e($_GET['q']) : '' ?>"
-                           placeholder="Cari ulasan atau film lalu tekan Enter..." 
-                           autocomplete="off">
-                    <button type="submit" class="search-btn-submit" title="Cari" aria-label="Cari">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                        </svg>
-                    </button>
-                    <button type="button" id="close-search" class="search-btn-close" aria-label="Tutup pencarian" title="Tutup">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                            <line x1="6" y1="6" x2="18" y2="18"></line>
-                        </svg>
-                    </button>
-                </form>
-                <div id="search-quick-results" class="search-quick-results"></div>
-            </div>
-        </div>
     </header>
 
     <?php 
@@ -105,6 +127,7 @@ $pageTitle = $pageTitle ?? 'Azumi Movie Reviews';
         <div class="container" style="padding-top: 15px; padding-bottom: 0;">
             <?php foreach ($flashMessages as $flash): ?>
                 <div class="alert-box alert-<?= e($flash['type']) ?>">
+                    <span class="alert-dot"></span>
                     <span><?= e($flash['message']) ?></span>
                 </div>
             <?php endforeach; ?>

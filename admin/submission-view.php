@@ -35,9 +35,9 @@ $paragraphs = get_paragraphs($submission['content']);
         </a>
     </div>
 
-    <div style="display: grid; grid-template-columns: 1fr 340px; gap: 28px; align-items: start;">
+    <div class="admin-detail-layout">
         <!-- Left: Full Review Content -->
-        <div style="background-color: var(--white); border-radius: 8px; padding: 32px; box-shadow: 0 2px 12px var(--shadow); border: 1px solid var(--light-grey);">
+        <div class="admin-detail-card">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
                 <span class="category"><?= e($submission['category'] ?: 'REVIEWS') ?></span>
                 <span class="badge badge-<?= e($submission['status']) ?>">
@@ -83,22 +83,22 @@ $paragraphs = get_paragraphs($submission['content']);
         </div>
 
         <!-- Right: Poster & Quick Moderation Actions -->
-        <div>
+        <div class="admin-detail-sidebar">
             <!-- Poster Card -->
-            <div style="background-color: var(--white); border-radius: 8px; padding: 20px; box-shadow: 0 2px 12px var(--shadow); border: 1px solid var(--light-grey); margin-bottom: 24px; text-align: center;">
+            <div class="admin-sidebar-card text-center">
                 <h4 style="font-family: var(--font-heading); font-size: 0.8rem; letter-spacing: 0.5px; margin-bottom: 12px; color: var(--dark);">
                     POSTER FILM
                 </h4>
                 <img src="../<?= e(get_poster_url($submission['image_path'])) ?>" 
                      alt="<?= e($submission['title']) ?>" 
-                     style="width: 100%; max-height: 400px; object-fit: contain; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                     class="admin-poster-view">
                 <div style="font-size: 0.75rem; color: var(--lighter-grey); margin-top: 8px; word-break: break-all;">
                     File: <?= e($submission['image_path']) ?>
                 </div>
             </div>
 
             <!-- Moderation Form Card -->
-            <div style="background-color: var(--white); border-radius: 8px; padding: 24px; box-shadow: 0 2px 12px var(--shadow); border: 1px solid var(--light-grey);">
+            <div class="admin-sidebar-card">
                 <h4 style="font-family: var(--font-heading); font-size: 0.85rem; letter-spacing: 0.5px; margin-bottom: 16px; color: var(--dark);">
                     TINDAKAN MODERASI
                 </h4>

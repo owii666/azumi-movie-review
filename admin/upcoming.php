@@ -17,16 +17,16 @@ $upcomingFilms = $stmt->fetchAll();
 ?>
 
 <main class="admin-container">
-    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 24px; flex-wrap: wrap; gap: 10px;">
+    <div class="admin-page-header">
         <div>
-            <h1 style="font-family: var(--font-heading); font-size: 1.5rem; color: var(--dark); margin-bottom: 4px;">
+            <h1 class="admin-page-title">
                 Kelola Film Upcoming
             </h1>
-            <p style="color: var(--lighter-grey); font-size: 0.85rem;">
-                Daftar film yang akan atau sedang ditonton oleh admin. Hanya menampilkan poster dan judul film di website publik.
+            <p class="admin-page-subtitle">
+                Daftar film yang akan atau sedang ditonton oleh admin. Menampilkan poster dan judul film di website publik.
             </p>
         </div>
-        <button type="button" class="btn-submit" onclick="toggleAddForm()" style="padding: 10px 18px; font-size: 0.85rem;">
+        <button type="button" class="btn-submit" onclick="toggleAddForm()" style="padding: 8px 16px; font-size: 0.8rem;">
             + Tambah Film Upcoming
         </button>
     </div>
@@ -44,7 +44,7 @@ $upcomingFilms = $stmt->fetchAll();
             <?= csrf_field() ?>
             <input type="hidden" name="action" value="add">
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="admin-form-grid-2">
                 <div class="form-group">
                     <label for="title">Judul Film <span class="required">*</span></label>
                     <input type="text" name="title" id="title" class="form-control" required 
@@ -56,6 +56,20 @@ $upcomingFilms = $stmt->fetchAll();
                     <label for="poster">File Poster Film <span class="required">*</span></label>
                     <input type="file" name="poster" id="poster" class="form-control" accept=".jpg,.jpeg,.png,.webp" required>
                     <div class="form-help">Format: JPG, JPEG, PNG, WebP &bull; Maksimal 2 MB.</div>
+                    
+                    <!-- Poster Image Preview -->
+                    <div id="upcomingPreviewBox" class="image-preview-container" style="display: none; margin-top: 10px;">
+                        <div class="image-preview-card" style="padding: 10px 14px;">
+                            <div class="image-preview-thumb-wrap" style="width: 50px; height: 72px;">
+                                <img id="upcomingPreviewImg" src="" alt="Pratinjau Poster" class="image-preview-thumb">
+                            </div>
+                            <div class="image-preview-meta">
+                                <span class="preview-badge">PRATINJAU POSTER</span>
+                                <span id="upcomingPreviewName" class="preview-filename" style="font-size: 0.82rem;"></span>
+                                <span id="upcomingPreviewSize" class="preview-filesize"></span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -176,6 +190,36 @@ function closeDeleteUpcomingModal() {
 document.getElementById("deleteUpcomingModal").addEventListener("click", function(e) {
     if (e.target === this) closeDeleteUpcomingModal();
 });
+
+// Live image preview for upcoming poster
+const upcomingPosterInput = document.getElementById("poster");
+if (upcomingPosterInput) {
+    upcomingPosterInput.addEventListener("change", function () {
+        const previewBox = document.getElementById("upcomingPreviewBox");
+        const previewImg = document.getElementById("upcomingPreviewImg");
+        const previewName = document.getElementById("upcomingPreviewName");
+        const previewSize = document.getElementById("upcomingPreviewSize");
+
+        if (this.files && this.files[0]) {
+            const file = this.files[0];
+            const sizeMb = (file.size / (1024 * 1024)).toFixed(2);
+            if (file.type && file.type.startsWith("image/")) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    if (previewImg) previewImg.src = e.target.result;
+                    if (previewName) previewName.textContent = file.name;
+                    if (previewSize) previewSize.textContent = sizeMb + " MB";
+                    if (previewBox) previewBox.style.display = "block";
+                };
+                reader.readAsDataURL(file);
+            } else {
+                if (previewBox) previewBox.style.display = "none";
+            }
+        } else {
+            if (previewBox) previewBox.style.display = "none";
+        }
+    });
+}
 </script>
 
 <?php require_once __DIR__ . '/footer.php'; ?>

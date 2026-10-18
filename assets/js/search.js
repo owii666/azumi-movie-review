@@ -39,12 +39,17 @@ document.addEventListener("DOMContentLoaded", () => {
                             resultLink.className = "search-quick-item";
                             const targetUrl = (isInsideAdmin ? '../' : '') + item.url;
                             resultLink.href = targetUrl;
+                            
+                            const imgHtml = item.image ? `<img src="${(isInsideAdmin ? '../' : '') + escapeHtml(item.image)}" alt="${escapeHtml(item.title)}" class="search-item-thumb" loading="lazy">` : '';
+
                             resultLink.innerHTML = `
-                                <div>
-                                    <strong style="display:block; font-size: 0.9rem; color: var(--dark); font-family: var(--font-heading);">${escapeHtml(item.title)}</strong>
-                                    <span style="display:block; font-size: 0.75rem; color: var(--lighter-grey); margin-top: 2px;">
-                                        ${escapeHtml(item.category)} &bull; ${escapeHtml(item.meta || '')}
-                                    </span>
+                                <div class="search-item-inner">
+                                    ${imgHtml}
+                                    <div class="search-item-content">
+                                        <span class="search-item-cat">${escapeHtml(item.category)}</span>
+                                        <div class="search-item-title">${escapeHtml(item.title)}</div>
+                                        <span class="search-item-meta">${escapeHtml(item.meta || '')}</span>
+                                    </div>
                                 </div>
                             `;
                             searchResultsDiv.appendChild(resultLink);
@@ -85,6 +90,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.key === "Escape") {
             searchResultsDiv.innerHTML = "";
             searchResultsDiv.classList.remove("has-results");
+            const dropdown = document.getElementById("search-dropdown-bar");
+            if (dropdown) dropdown.classList.remove("active");
         }
     });
 

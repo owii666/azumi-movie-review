@@ -27,7 +27,7 @@ $stmtOthers = $pdo->prepare("
     SELECT * FROM film_submissions 
     WHERE status = 'approved' AND id != :latestId 
     ORDER BY COALESCE(reviewed_at, submitted_at) DESC, id DESC 
-    LIMIT 4
+    LIMIT 6
 ");
 $stmtOthers->execute([':latestId' => $latestId]);
 $otherReviews = $stmtOthers->fetchAll();
